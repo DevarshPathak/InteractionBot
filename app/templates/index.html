@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Interaction Chatbot</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #333645;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* background-image: url('./bg.jpg'); Adjust the path here */
+        }
+
+        #chat-container {
+            width: 800px;
+            height: 800px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #e1e6e9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background-color: #34495E;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            /* Align user messages to the right */
+            background-color: #253c47;
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px 15px;
+            max-width: fit-content;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: #a7bcc9;
+            color: #333;
+            border-radius: 10px;
+            padding: 10px 15px;
+            max-width: fit-content;
+        }
+
+        .chat-footer {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        #message_input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .button {
+            background-color: #253c47;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .button:hover {
+            background-color: #a7bcc9;
+            color: black;
+        }
+
+        #send-button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <div class="chat-header">Drug-Drug Interaction Chatbot</div>
+        <div id="messages">
+            <!-- Chat messages will be displayed here -->
+            <div class="message bot-message">Hello! How can I assist you today?</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="message_input" placeholder="Type your message...">
+            <button id="send-button" class="button" onclick="sendMessage()">
+                Send
+            </button>
+            <button id="voice-button" class="button" onclick="toggleVoiceRecognition()">
+                Voice
+            </button>
+        </div>
+    </div>
+    <script>
+        const inputnamefield = document.getElementById('message_input');
+        const msg = document.querySelector("bot-message")
+
+        class VoiceRecorder {
+
+            constructor() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    console.log("getUserMedia supported")
+                } else {
+                    console.log("getUserMedia is not supported on your browser!")
+                }
+
+                this.mediaRecorder;
+                this.stream;
+                this.chunks = [];
+                this.isRecording = false;
+
+                this.constraints = {
+                    audio: true,
+                    video: false
+                };
+            }
+
+            handleSuccess(stream) {
+                this.stream = stream;
+                this.stream.oninactive = () => {
+                    console.log("Stream ended!");
+                };
+                this.mediaRecorder = new MediaRecorder(this.stream);
+                console.log(this.mediaRecorder);
+                this.mediaRecorder.ondataavailable = this.onMediaRecorderDataAvailable.bind(this);
+                this.mediaRecorder.onstop = this.onMediaRecorderStop.bind(this);
+                this.mediaRecorder.start();
+            }
+
+            handleError(error) {
+                console.log("navigator.getUserMedia error: ", error);
+            }
+
+            onMediaRecorderDataAvailable(e) {
+                this.chunks.push(e.data);
+            }
+
+            async onMediaRecorderStop() {
+                const blob = new Blob(this.chunks, { 'type': 'audio/ogg; codecs=opus' });
+                this.chunks = [];
+                this.stream.getAudioTracks().forEach(track => track.stop());
+                this.stream = null;
+
+                // Create FormData object and append the audio file
+                const formData = new FormData();
+                formData.append('audio', blob, 'recording.ogg');
+
+                // Send the FormData object to the Flask backend
+                const data = await fetch('http://127.0.0.1:5000/upload-audio', {
+                    method: 'POST',
+                    body: formData
+                }).then((response) => {
+                    if (response.ok) {
+                        return response.json(); // Parse response as JSON
+                    } else {
+                        throw new Error('Failed indexto upload audio file');
+                    }
+                })
+                    .then((data) => {
+                        // Set the value of the input field to the transcript text
+                        inputnamefield.value = data.transcriptText;
+                        console.log('Audio file uploaded successfully');
+                    })
+                    .catch(error => {
+                        console.error('Error uploading audio file:', error);
+                    });
+
+
+            }
+
+            startRecording() {
+                if (this.isRecording) return;
+
+                // Check if getUserMedia is available
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Request access to the microphone
+                    navigator.mediaDevices.getUserMedia(this.constraints)
+                        .then(this.handleSuccess.bind(this))
+                        .catch(this.handleError.bind(this));
+                } else {
+                    console.error('getUserMedia is not supported on your browser!');
+                }
+
+                this.isRecording = true;
+            }
+
+            stopRecording() {
+                if (!this.isRecording) return;
+                this.isRecording = false;
+                this.mediaRecorder.stop();
+            }
+        }
+
+        const voiceRecorder = new VoiceRecorder();
+
+        function toggleVoiceRecognition() {
+            if (!voiceRecorder.isRecording) {
+
+                voiceRecorder.startRecording();
+                document.getElementById('voice-button').innerText = 'Stop';
+            } else {
+
+                voiceRecorder.stopRecording();
+                document.getElementById('voice-button').innerText = 'Voice';
+            }
+        }
+        async function sendMessage() {
+            const message = inputnamefield.value.trim(); // Get the message text from the input field
+            console.log("MESSAGE-------->", message);
+            if (message == '') return; // If the message is empty, do nothing
+
+            // Clear the input field
+            inputnamefield.value = '';
+
+            // Add the user's message to the chat
+            appendMessage('user', message);
+
+            try {
+                // Make a POST request to the API endpoint to get the bot's response
+                console.log("try catch");
+                const response = await fetch('http://127.0.0.1:5000/generate_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                });
+                console.log("response---------->", response);
+
+                // Check if the request was successful
+                if (!response.ok) {
+                    throw new Error('Failed to get response from the server');
+                }
+                else {
+                    console.log("ALL OKAY-----------");
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+                console.log("DATA_----------------------------->", data);
+
+                // Add the bot's response to the chat
+                appendMessage('bot', data.data);
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+
+        function appendMessage(sender, text) {
+            const messagesContainer = document.getElementById('messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            if (sender === 'user') {
+                messageElement.classList.add('user-message');
+            } else if (sender === 'bot') {
+                messageElement.classList.add('bot-message');
+            }
+
+            messageElement.textContent = text;
+            messagesContainer.appendChild(messageElement);
+
+            // Scroll to the bottom of the messages container
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+    </script>
+
+
+</body>
+
+</html>
