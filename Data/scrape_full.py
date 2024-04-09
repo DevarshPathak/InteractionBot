@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import Select
 
 
 # Set up the Selenium WebDriver with the provided chromedriver path
-chromedriver_path = "./chromedriver"
+chromedriver_path = "./chromedriver/path.txt"
 chrome_service = ChromeService(executable_path=chromedriver_path)
 driver = webdriver.Chrome(service=chrome_service)
 f=open('./read_full.txt','r')
@@ -179,7 +179,7 @@ for m in range(0,100000):
             rows = zip(name, drugB, interaction, mechanism,danger)
 
             # Specify the CSV file path
-            csv_file_path = '/media/p21-0022/0dd6241e-0e5e-41f4-a920-1239044d080e1/home/p21-0022/Devarsh_Project_AI_copilot/data/drugs_full.csv'
+            csv_file_path = './drugs_full.csv'
 
             # Write the data to the CSV file
             with open(csv_file_path, 'a', newline='') as file:
