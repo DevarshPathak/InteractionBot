@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import Select
 
 
 # Set up the Selenium WebDriver with the provided chromedriver path
-chromedriver_path = "./chromedriver/chromedriver-linux64/path.txt"
+chromedriver_path = "./chromedriver/chromedriver-linux64/chromedriver"
 chrome_service = ChromeService(executable_path=chromedriver_path)
 driver = webdriver.Chrome(service=chrome_service)
 f=open('./read_full.txt','r')
