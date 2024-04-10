@@ -1,0 +1,17 @@
+-- Create the database if it does not exist
+CREATE DATABASE IF NOT EXISTS drugInteraction;
+USE drugInteraction;
+
+-- Create tbl_user table
+CREATE TABLE IF NOT EXISTS credentials (
+  id INT NOT NULL AUTO_INCREMENT,
+  username VARCHAR(100) DEFAULT NULL,
+  email VARCHAR(100) DEFAULT NULL,
+  password VARCHAR(1024),
+  token VARCHAR(1024),
+  otp VARCHAR(100) DEFAULT '3590',
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  isverify TINYINT DEFAULT 0,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
