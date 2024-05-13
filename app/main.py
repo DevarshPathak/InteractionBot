@@ -127,7 +127,7 @@ def signin():
                 print(msg)  
                 generate_otp = randint(1111, 9999)
                 msg = Message('Verify Your Registration',
-                            sender='<EMAIL>', recipients=[email])
+                            sender='edupmetest@gmail.com', recipients=[email])
                 msg.body = "Your verification code is: " + str(generate_otp)
                 mail.send(msg)
                 cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -180,7 +180,7 @@ def signup():
 
             generate_otp = randint(1111, 9999)
             msg = Message('Verify Your Registration',
-                          sender='<EMAIL>', recipients=[email])
+                          sender='edupmetest@gmail.com', recipients=[email])
             msg.body = "Your verification code is: " + str(generate_otp)
             mail.send(msg)
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -202,7 +202,7 @@ def signup():
                      'UPDATE credentials SET otp = %s, token = %s WHERE email = %s', (generate_otp, token, email))
                 mysql.connection.commit()
 
-                msg = "Successfully email submit!"
+                msg = "Email submitted successfully!"
                 print(msg)
                 cursor.close()
 
@@ -230,18 +230,19 @@ def verifyOTP():
                     'update credentials set isverify = %s where email = %s', ('1', email,))
                 mysql.connection.commit()
 
-                msg = 'your OTP is match'
+                msg = 'your OTP matched successfully'
                 print(msg)
                 cursor.close()
-                return render_template('index.html')
-            msg = "Your OTP is not match"
+                return render_template('index.html',msg=msg, email=email)
+            msg = "Your OTP does not match"
             print(msg)
             cursor.close()
-            return render_template('verifyOTP.html')
+            return render_template('verifyOTP.html',msg=msg, email=email)
         msg = "Email Doesn't Exists"
         print(msg)
         cursor.close()
-    return render_template('verifyOTP.html')
+    email=request.args.get('email','')
+    return render_template('verifyOTP.html',email=email)
 
 @app.route('/passcpass',methods=['GET','POST'])
 def passcpass():
@@ -259,31 +260,35 @@ def passcpass():
             return render_template('signin.html')
         msg = "Email Doesn't Exists"
         return render_template('passcpass.html',msg=msg)
-    return render_template('passcpass.html')
+    email=request.args.get('email','')
+    return render_template('passcpass.html',email=email)
     
 @app.route('/forgotOTP', methods=['GET', 'POST'])
 def forgotOTP():
     if request.method == 'POST':
         email = request.form['email']
-        otp = request.form['otp']
-        print(email)
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT otp FROM credentials WHERE email = % s', (email,))
+        cursor.execute('SELECT otp FROM credentials WHERE email = %s', (email,))
         account = cursor.fetchone()
-        print(str(account['otp']))
-        if str(account['otp']) == str(otp):
-            
-            msg = 'your OTP is match'
-            print(msg)
-            cursor.execute(
-                    'update credentials set isverify = %s where email = %s', (True, email,))
-            mysql.connection.commit()
-            return render_template('passcpass.html',email=email)
-        msg = "Your OTP is not match"
-        print(msg)
-        return render_template('forgotOTP.html',msg=msg)
-        
-    return render_template('forgotOTP.html')
+
+        if account:
+            if account['otp']:
+                if str(account['otp']) == request.form['otp']:
+                    cursor.execute('UPDATE credentials SET isverify = %s WHERE email = %s', (True, email,))
+                    mysql.connection.commit()
+                    return render_template('passcpass.html', email=email)
+                else:
+                    msg = "Your OTP does not match"
+                    return render_template('forgotOTP.html', msg=msg, email=email)
+            else:
+                msg = "No OTP found for this email"
+                return render_template('forgotOTP.html', msg=msg, email=email)
+        else:
+            msg = "Email doesn't exist"
+            return render_template('forgotOTP.html', msg=msg, email=email)
+
+    email = request.args.get('email', '')
+    return render_template('forgotOTP.html', email=email)
 
 @app.route('/check_email', methods=['GET','POST'])
 def check_email():
@@ -310,11 +315,10 @@ def forgot():
         cursor.execute('SELECT * FROM credentials WHERE email = % s', (email,))
         account = cursor.fetchone()
         print(email)
-        print(email,"abcd")
         if account:
             generate_otp = randint(111111, 999999)
             msg = Message('Verify Your Registration',
-                            sender='<EMAIL>', recipients=[email])
+                            sender='edupmetest@gmail.com', recipients=[email])
             msg.body = "Your verification code is: " + str(generate_otp)
             mail.send(msg)
             print(generate_otp)
@@ -337,4 +341,4 @@ def logout():
 
 # main driver function
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")

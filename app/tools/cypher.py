@@ -8,11 +8,11 @@ graph = Neo4jGraph(
 api_key = None
 with open('<GROQ_KEY>', 'r') as f:
     api_key = f.read().strip()
-llm = ChatGroq(temperature=0, groq_api_key=api_key, model_name="mixtral-8x7b-32768")
+llm = ChatGroq(temperature=0, groq_api_key=api_key, model_name="llama3-70b-8192")
 
 cypher_qa = GraphCypherQAChain.from_llm(
     llm,    
     graph=graph,
-    top_k = 900,
-    chain_type="stuff"
+    top_k = 40,
+    chain_type="refine"
 )

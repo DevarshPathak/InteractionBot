@@ -8,15 +8,15 @@
 <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap'>
 
 <style>
-    * {
+  * {
     font-family: "Poppins";
   }
-  
+
   body {
     -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     overflow-y: hidden;
     display: flex;
     justify-content: center;
@@ -24,7 +24,7 @@
     background: #dde5f4;
     height: 100vh;
   }
-  
+
   .screen-1 {
     background: #f1f7fe;
     padding: 2em;
@@ -34,9 +34,11 @@
     box-shadow: 0 0 2em #e6e9f9;
     gap: 2em;
   }
+
   .screen-1 .logo {
     margin-top: -3em;
   }
+
   .screen-1 .email {
     background: white;
     box-shadow: 0 0 2em #e6e9f9;
@@ -48,26 +50,32 @@
     color: #141414;
     margin-top: -3em;
   }
+
   .screen-1 .email input {
     outline: none;
     border: none;
   }
+
   .screen-1 .email input::-moz-placeholder {
     color: rgb(87, 84, 84);
     font-size: 0.9em;
   }
+
   .screen-1 .email input:-ms-input-placeholder {
     color: rgb(179, 177, 177);
     font-size: 0.9em;
   }
+
   .screen-1 .email input::placeholder {
     color: rgb(179, 177, 177);
     font-size: 0.9em;
   }
+
   .screen-1 .email ion-icon {
     color: #4d4d4d;
     margin-bottom: -0.2em;
   }
+
   .screen-1 .password {
     background: white;
     box-shadow: 0 0 2em #e6e9f9;
@@ -78,29 +86,36 @@
     border-radius: 20px;
     color: #141414;
   }
+
   .screen-1 .password input {
     outline: none;
     border: none;
   }
+
   .screen-1 .password input::-moz-placeholder {
     color: rgb(87, 84, 84);
     font-size: 0.9em;
   }
+
   .screen-1 .password input:-ms-input-placeholder {
     color: rgb(179, 177, 177);
     font-size: 0.9em;
   }
+
   .screen-1 .password input::placeholder {
     color: rgb(179, 177, 177);
     font-size: 0.9em;
   }
+
   .screen-1 .password ion-icon {
     color: #4d4d4d;
     margin-bottom: -0.2em;
   }
+
   .screen-1 .password .show-hide {
     margin-right: -5em;
   }
+
   .screen-1 .login {
     padding: 1em;
     background: #3e4684;
@@ -109,6 +124,7 @@
     border-radius: 30px;
     font-weight: 600;
   }
+
   .screen-1 .footer {
     display: flex;
     font-size: 0.7em;
@@ -116,34 +132,35 @@
     gap: 14em;
     padding-bottom: 10em;
   }
+
   .screen-1 .footer span {
     cursor: pointer;
   }
-  
+
   button {
     cursor: pointer;
   }
+
   .alert {
-  padding: 20px;
-  background-color: #f44336;
-  color: white;
-}
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+  }
 
-.closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
 
-.closebtn:hover {
-  color: black;
-}
-</style>
+  .closebtn:hover {
+    color: black;
+  }
 </style>
 </head>
 <body>
@@ -170,15 +187,16 @@
       <polygon style="stroke: rgb(0,0,0); stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke" points="-50,-50 -50,50 50,50 50,-50 "></polygon>
     </g>
   </svg>
-{%if msg %}
+
+
+<div class="screen-1">
+    <!-- Your logo SVG and alert message here -->
+    {%if msg %}
 <div class="alert">
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 <strong>{{msg}}</strong>
 </div>
 {% endif %}
-
-<div class="screen-1">
-    <!-- Your logo SVG and alert message here -->
 
     <div class="email">
       <label for="email">Email Address</label>

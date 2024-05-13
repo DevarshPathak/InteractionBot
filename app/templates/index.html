@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drug Interaction Chatbot</title>
@@ -19,15 +20,17 @@
         }
 
         #chat-container {
-            width: 800px;
-            height: 800px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-            background-color: #e1e6e9;
-            display: flex;
-            flex-direction: column;
-        }
+        width: 90%; /* 90% of the viewport width */
+        height: 90%; /* 90% of the viewport height */
+        max-width: 800px; /* Maximum width for desktop */
+        max-height: 800px; /* Maximum height for desktop */
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+        background-color: #e1e6e9;
+        display: flex;
+        flex-direction: column;
+    }
 
         .chat-header {
             background-color: #34495E;
@@ -103,6 +106,14 @@
         #send-button {
             margin-right: 5px;
         }
+        .disclaimer {
+            color: #3399ff; /* Change color as desired */
+            font-style: italic; /* Optionally add italic style */
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
     </style>
 </head>
 
@@ -122,7 +133,10 @@
                 Voice
             </button>
         </div>
+        <div class="message disclaimer">This bot can make mistakes. Consider checking important information.</div>
+
     </div>
+    
     <script>
         const inputnamefield = document.getElementById('message_input');
         const msg = document.querySelector("bot-message")
@@ -178,7 +192,7 @@
                 formData.append('audio', blob, 'recording.ogg');
 
                 // Send the FormData object to the Flask backend
-                const data = await fetch('http://127.0.0.1:5000/upload-audio', {
+                const data = await fetch('/upload-audio', {
                     method: 'POST',
                     body: formData
                 }).then((response) => {
@@ -250,7 +264,7 @@
             try {
                 // Make a POST request to the API endpoint to get the bot's response
                 console.log("try catch");
-                const response = await fetch('http://127.0.0.1:5000/generate_response', {
+                const response = await fetch('/generate_response', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
