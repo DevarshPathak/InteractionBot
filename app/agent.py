@@ -18,7 +18,7 @@ from langchain.cache import InMemoryCache
 set_llm_cache(InMemoryCache())
 
 
-chat = ChatGroq(temperature=0, groq_api_key="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", model_name="llama3-70b-8192",max_retries=2,max_tokens=5000)
+chat = ChatGroq(temperature=0, groq_api_key="<GROQ_API_KEY>", model_name="llama3-70b-8192",max_retries=2,max_tokens=5000)
 
 agent_prompt = hub.pull("hwchase17/react-chat")
 prompt_template = PromptTemplate.from_template("""
@@ -151,7 +151,7 @@ def generate_response(prompts):
         try:
             URI = "neo4j+s://e89ec291.databases.neo4j.io"
             AUTH = ("neo4j", "5qfTZ43ehzbUa-FOuK_mgX1iLTkHBV_QCKS5IZMqNB8")
-            chat = ChatGroq(temperature=0, groq_api_key="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", model_name="llama3-70b-8192",max_retries=5,max_tokens=5000)
+            chat = ChatGroq(temperature=0, groq_api_key="<GROQ_API_KEY>", model_name="llama3-70b-8192",max_retries=5,max_tokens=5000)
 
             system = "You are a helpful assistant that identifies only drug name from given sentence or question and return only the names without any explanation if present else return a big comma separated answer and return in comma separated format.There can be maximun 2 drugs in question not more. Give a detailed answer if there are no drug names in the sentence. Return only first 2 drug names you find"
             human = "{text}"
